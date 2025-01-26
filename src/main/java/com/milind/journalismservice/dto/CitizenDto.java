@@ -19,7 +19,6 @@ public class CitizenDto {
 
     private String name;
     private String aadharNumber;
-    @JsonIgnore
     private String password;
     @Enumerated(EnumType.STRING)
     private CitizenStatus status;
