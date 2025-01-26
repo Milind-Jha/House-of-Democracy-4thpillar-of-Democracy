@@ -5,8 +5,10 @@ phases:
     runtime-versions:
       java: corretto17
     commands:
-      - echo Installing dependencies...
-      - apt-get update -y && apt-get install -y docker.io
+      - echo Installing Docker...
+      - yum update -y
+      - yum install -y docker
+      - service docker start
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
@@ -17,19 +19,8 @@ phases:
   build:
     commands:
       - echo Building Spring Boot Docker image...
-      - DOCKER_CONTAINER_NAME=journalism-service
-      - docker build -t $DOCKER_CONTAINER_NAME .
-      - docker tag $DOCKER_CONTAINER_NAME:latest 942948037842.dkr.ecr.ap-south-1.amazonaws.com/$DOCKER_CONTAINER_NAME:latest
+      - docker build -t journalism-service .
+      - docker tag journalism-service:latest 942948037842.dkr.ecr.ap-south-1.amazonaws.com/journalism-service:latest
       - echo Pulling and tagging MySQL image...
       - docker pull mysql:8.0
-      - docker tag mysql:8.0 942948037842.dkr.ecr.ap-south-1.amazonaws.com/mysql:8.0
-  post_build:
-    commands:
-      - echo Pushing Spring Boot Docker image to ECR...
-      - docker push 942948037842.dkr.ecr.ap-south-1.amazonaws.com/journalism-service:latest
-      - echo Pushing MySQL Docker image to ECR...
-      - docker push 942948037842.dkr.ecr.ap-south-1.amazonaws.com/mysql:8.0
-artifacts:
-  files:
-    - "**/*"
-  discard-paths: yes
+      - docker tag mysql:8.0 942948037842.dkr.ecr.ap-south-1.am
