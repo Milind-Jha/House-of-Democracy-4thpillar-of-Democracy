@@ -1,0 +1,35 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+    commands:
+      - echo Installing dependencies...
+      - apt-get update -y && apt-get install -y docker.io
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 942948037842.dkr.ecr.ap-south-1.amazonaws.com
+      - echo Creating ECR repositories if not exists...
+      - aws ecr describe-repositories --repository-names journalism-service || aws ecr create-repository --repository-name journalism-service
+      - aws ecr describe-repositories --repository-names mysql || aws ecr create-repository --repository-name mysql
+  build:
+    commands:
+      - echo Building Spring Boot Docker image...
+      - DOCKER_CONTAINER_NAME=journalism-service
+      - docker build -t $DOCKER_CONTAINER_NAME .
+      - docker tag $DOCKER_CONTAINER_NAME:latest 942948037842.dkr.ecr.ap-south-1.amazonaws.com/$DOCKER_CONTAINER_NAME:latest
+      - echo Pulling and tagging MySQL image...
+      - docker pull mysql:8.0
+      - docker tag mysql:8.0 942948037842.dkr.ecr.ap-south-1.amazonaws.com/mysql:8.0
+  post_build:
+    commands:
+      - echo Pushing Spring Boot Docker image to ECR...
+      - docker push 942948037842.dkr.ecr.ap-south-1.amazonaws.com/journalism-service:latest
+      - echo Pushing MySQL Docker image to ECR...
+      - docker push 942948037842.dkr.ecr.ap-south-1.amazonaws.com/mysql:8.0
+artifacts:
+  files:
+    - "**/*"
+  discard-paths: yes

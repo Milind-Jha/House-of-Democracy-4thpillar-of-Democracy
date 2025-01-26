@@ -1,34 +1,34 @@
-version: "3.9"
+  version: "3.9"
 
-services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql-container
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: 12345678
-      MYSQL_DATABASE: journalism-db
-      MYSQL_PASSWORD: 12345678
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
+  services:
+    mysql:
+      image: mysql:8.0
+      container_name: mysql-container
+      restart: always
+      environment:
+        MYSQL_ROOT_PASSWORD: 12345678
+        MYSQL_DATABASE: journalism-db
+        MYSQL_PASSWORD: 12345678
+      ports:
+        - "3307:3306"
+      volumes:
+        - mysql-data:/var/lib/mysql
 
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: journalism-service
-    depends_on:
-      - mysql
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/journalism-db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 12345678
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
+    app:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      container_name: journalism-service
+      depends_on:
+        - mysql
+      ports:
+        - "8080:8080"
+      environment:
+        SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/journalism-db
+        SPRING_DATASOURCE_USERNAME: root
+        SPRING_DATASOURCE_PASSWORD: 12345678
+        SPRING_JPA_HIBERNATE_DDL_AUTO: update
+        SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
 
-volumes:
-  mysql-data:
+  volumes:
+    mysql-data:
