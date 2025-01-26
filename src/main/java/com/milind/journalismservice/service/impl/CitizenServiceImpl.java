@@ -1,10 +1,12 @@
 package com.milind.journalismservice.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.milind.journalismservice.dto.CitizenDto;
 import com.milind.journalismservice.entities.Citizen;
 import com.milind.journalismservice.repository.CitizenRepository;
 import com.milind.journalismservice.response.CitizenResponse;
 import com.milind.journalismservice.service.CitizenService;
+import com.milind.journalismservice.util.CitizenMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,18 +16,15 @@ public class CitizenServiceImpl implements CitizenService {
     @Autowired
     private CitizenRepository citizenRepository;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
     @Override
-    public CitizenResponse createNewCitizen(Citizen citizen) {
-        citizenRepository.save(citizen);
-        System.out.println(citizen);
+    public CitizenResponse createNewCitizen(CitizenDto citizenDto) {
+        Citizen citizen = citizenRepository.save(CitizenMapper.toEntity(citizenDto));
+        System.out.println(citizenDto);
         CitizenResponse citizenResponse = new CitizenResponse();
         citizenResponse.setId(citizen.getId());
-        citizenResponse.setName(citizen.getName());
-        citizenResponse.setAadharNumber(citizen.getAadharNumber());
-        citizenResponse.setStatus(citizen.getStatus());
+        citizenResponse.setName(citizenDto.getName());
+        citizenResponse.setAadharNumber(citizenDto.getAadharNumber());
+        citizenResponse.setStatus(citizenDto.getStatus());
         return citizenResponse;
     }
 

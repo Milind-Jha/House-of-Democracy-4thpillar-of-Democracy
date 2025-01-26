@@ -1,5 +1,6 @@
 package com.milind.journalismservice.controller;
 
+import com.milind.journalismservice.dto.CitizenDto;
 import com.milind.journalismservice.entities.Citizen;
 import com.milind.journalismservice.response.CitizenResponse;
 import com.milind.journalismservice.service.CitizenService;
@@ -18,8 +19,15 @@ public class CitizenController {
     private CitizenService citizenService;
 
     @PostMapping("/signupUser")
-    public ResponseEntity<CitizenResponse> createCitizen(@RequestBody Citizen citizen){
+    public ResponseEntity<CitizenResponse> createCitizen(@RequestBody CitizenDto citizenDto){
+        CitizenResponse newCitizen = citizenService.createNewCitizen(citizenDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newCitizen);
+    }
+
+    @PostMapping("/getUser")
+    public ResponseEntity<CitizenResponse> getCitizen(@RequestBody Citizen citizen){
         CitizenResponse newCitizen = citizenService.createNewCitizen(citizen);
         return ResponseEntity.status(HttpStatus.CREATED).body(newCitizen);
     }
+
 }
